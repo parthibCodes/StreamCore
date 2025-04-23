@@ -11,16 +11,20 @@ const uploadOnCLoudinary = async(localFilePath)=>{
     try{
         if(!localFilePath){
             console.log("Can't find the file path");
-            process.exit(1);
         }
         //Upload the file
         const response = await cloudinary.uploader.upload(localFilePath,{
             resource_type:"auto"
         });
-        console.log("File is uploaded on cloudinary ",response.url);
+        // console.log("File is uploaded on cloudinary ",response.url);
+        if (fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
         return response;
     }catch(err){
-        fs.unlinkSync(localFilePath)  //remove the locally saved temporary file as the upload operation got failed
+        if (localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }  //remove the locally saved temporary file as the upload operation got failed
         return null;
     }
 }
